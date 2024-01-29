@@ -2,6 +2,16 @@ import 'package:dio/dio.dart';
 import 'package:flutter_dio_example/core/constants/constants.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../model/post.dart';
+
+final getPostsProvider = FutureProvider.autoDispose<List<Post>>((ref) async {
+  try {
+    return await ref.read(homeRepositoryProvider).get();
+  } catch (e) {
+    rethrow;
+  }
+});
+
 final homeRepositoryProvider = Provider(
   (ref) => HomeRepository(
     dio: Dio(),
@@ -13,71 +23,48 @@ class HomeRepository {
 
   HomeRepository({required this.dio});
 
-  Future<void> get() async {
+  Future<List<Post>> get() async {
+    List<Post> posts = [];
     try {
-      await dio.get(
+      final response = await dio.get(
         '$jsonPlaceholderBaseURL$jsonPlaceholderPosts',
       );
+      for (final post in response.data) {
+        posts.add(Post.fromJson(post));
+      }
     } catch (e) {
       rethrow;
     }
+    return posts;
   }
 
-  Future<void> post() async {
+  Future<Post> post(Post post) async {
     try {
-      await dio.post(
-        'https://jsonplaceholder.typicode.com/posts',
+      final response = await dio.post(
+        '$jsonPlaceholderBaseURL$jsonPlaceholderPosts',
+        data: post.toJson(),
       );
+      return Post.fromJson(response.data);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> put() async {
+  Future<void> put(Post post) async {
     try {
       await dio.put(
-        'https://jsonplaceholder.typicode.com/posts',
+        '$jsonPlaceholderBaseURL$jsonPlaceholderPosts/${post.id}',
+        data: post.toJson(),
       );
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> delete() async {
+  Future<void> delete(int id) async {
     try {
       await dio.delete(
-        'https://jsonplaceholder.typicode.com/posts',
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> patch() async {
-    try {
-      await dio.patch(
-        'https://jsonplaceholder.typicode.com/posts',
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> head() async {
-    try {
-      await dio.head(
-        'https://jsonplaceholder.typicode.com/posts',
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> download() async {
-    try {
-      await dio.download(
-        'https://jsonplaceholder.typicode.com/posts',
-        './',
+        '$jsonPlaceholderBaseURL$jsonPlaceholderPosts/$id',
       );
     } catch (e) {
       rethrow;
@@ -97,22 +84,6 @@ class HomeRepository {
     }
   }
 
-  Future<void> requestWithData() async {
-    try {
-      await dio.request(
-        'https://jsonplaceholder.typicode.com/posts',
-        options: Options(
-          method: 'GET',
-        ),
-        data: {
-          'id': 1,
-        },
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
   Future<void> requestWithQueryParameters() async {
     try {
       await dio.request(
@@ -123,22 +94,6 @@ class HomeRepository {
         queryParameters: {
           'id': 1,
         },
-      );
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> requestWithHeaders() async {
-    try {
-      await dio.request(
-        'https://jsonplaceholder.typicode.com/posts',
-        options: Options(
-          method: 'GET',
-          headers: {
-            'Authorization': 'Bearer token',
-          },
-        ),
       );
     } catch (e) {
       rethrow;
