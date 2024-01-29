@@ -1,0 +1,9 @@
+const String weatherAPIBaseURL = 'https://api.openweathermap.org/data/2.5/';
+const String weatherAPIKey = 'b1e57de8a49b03b476fcfe9ea6038f4f';
+const String jsonPlaceholderBaseURL = 'https://jsonplaceholder.typicode.com/';
+const String jsonPlaceholderPosts = 'posts';
+const String jsonPlaceholderComments = 'comments';
+const String jsonPlaceholderAlbums = 'albums';
+const String jsonPlaceholderPhotos = 'photos';
+const String jsonPlaceholderTodos = 'todos';
+const String jsonPlaceholderUsers = 'users';
